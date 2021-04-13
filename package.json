@@ -7,7 +7,9 @@
     "nestjs",
     "pubsub",
     "health",
-    "check"
+    "check",
+    "google",
+    "gcp"
   ],
   "main": "dist/pubsub-health-check.js",
   "typings": "dist/@types/pubsub-health-check.d.ts",
