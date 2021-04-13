@@ -1,6 +1,6 @@
 # nestjs-pubsub-health-check
 
-[![Deploy](https://github.com/mdovhopo/nestjs-pubsub-health-check/workflows/build/badge.svg)](https://github.com/mdovhopo/nestjs-pubsub-health-check/actions)
+[![Deploy](https://github.com/mdovhopo/nestjs-pubsub-health-check/workflows/deploy/badge.svg)](https://github.com/mdovhopo/nestjs-pubsub-health-check/actions)
 [![Coverage Status](https://coveralls.io/repos/github/mdovhopo/nestjs-pubsub-health-check/badge.svg?branch=master)](https://coveralls.io/github/mdovhopo/nestjs-pubsub-health-check?branch=master)
 
 Nest module, that checks health of PubSub module
