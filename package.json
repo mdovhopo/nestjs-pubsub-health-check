@@ -1,5 +1,5 @@
 {
-  "name": "@tricky-max/nestjs-pubsub-health-check",
+  "name": "nestjs-pubsub-health-check",
   "version": "0.0.0",
   "description": "Nest module, that checks health of PubSub module",
   "keywords": [
