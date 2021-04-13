@@ -1,4 +1,4 @@
-import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
+import { DynamicModule, ForwardReference, Module, Provider, Type } from '@nestjs/common';
 import { Topic } from '@google-cloud/pubsub';
 import { PubSubHealthCheckService } from './pubsub-health-check.service';
 
@@ -9,8 +9,9 @@ export type PubSubHealthCheckSettings = {
   healthCheckKey?: string;
 };
 
-type SettingsProvider = Exclude<Provider<PubSubHealthCheckSettings>, Type>;
-export type PubSubHealthCheckModuleOptions = Omit<SettingsProvider, 'provide'>;
+export type PubSubHealthCheckModuleOptions = Provider<PubSubHealthCheckSettings> & {
+  imports?: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference>;
+};
 
 @Module({})
 export class PubSubHealthCheckModule {
@@ -31,7 +32,9 @@ export class PubSubHealthCheckModule {
    * ```
    */
   static forRoot(options: PubSubHealthCheckSettings): DynamicModule {
-    return PubSubHealthCheckModule.forRootAsync({ useValue: options });
+    return PubSubHealthCheckModule.forRootAsync({
+      useValue: options,
+    } as PubSubHealthCheckModuleOptions);
   }
 
   /**
@@ -54,15 +57,17 @@ export class PubSubHealthCheckModule {
    * ```
    */
 
-  static forRootAsync(options: PubSubHealthCheckModuleOptions): DynamicModule {
+  static forRootAsync(options: Omit<PubSubHealthCheckModuleOptions, 'provide'>): DynamicModule {
+    const { imports = [], ...restOptions } = options;
     return {
       module: PubSubHealthCheckModule,
       global: true,
+      imports,
       providers: [
         {
+          ...restOptions,
           provide: PubSubHealthCheckSettings,
-          ...options,
-        } as SettingsProvider,
+        } as PubSubHealthCheckModuleOptions,
         {
           provide: PubSubHealthCheckService,
           inject: [PubSubHealthCheckSettings],
