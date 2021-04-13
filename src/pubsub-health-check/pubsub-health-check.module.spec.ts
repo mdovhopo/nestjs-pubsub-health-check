@@ -29,7 +29,7 @@ describe('PubSubHealthCheckModule', () => {
   });
 
   describe('forRootAsync', () => {
-    it('create dynamic module', () => {
+    it('creates dynamic module', () => {
       const settings: PubSubHealthCheckSettings = {
         topics: [],
       };
@@ -41,11 +41,14 @@ describe('PubSubHealthCheckModule', () => {
       expect(mod).toEqual({
         module: PubSubHealthCheckModule,
         global: true,
+        imports: [],
         providers: [
           { provide: PubSubHealthCheckSettings, inject: [], useFactory: settingsFactory },
           {
             provide: PubSubHealthCheckService,
             inject: [PubSubHealthCheckSettings],
+            useClass: undefined,
+            useExisting: undefined,
             useFactory: expect.toSatisfy((fun) => {
               const pubSubHealthCheckService = fun(settings);
 
