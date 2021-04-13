@@ -4,5 +4,5 @@ export { PubSubHealthCheckService } from './pubsub-health-check/pubsub-health-ch
 export {
   PubSubHealthCheckModule,
   PubSubHealthCheckSettings,
-  PubSubHealthCheckModuleOptions,
+  PubSubHealthCheckAsyncOptions,
 } from './pubsub-health-check/pubsub-health-check.module';

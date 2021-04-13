@@ -1,4 +1,4 @@
-import { DynamicModule, ForwardReference, Module, Provider, Type } from '@nestjs/common';
+import { DynamicModule, Module, ModuleMetadata, Type } from '@nestjs/common';
 import { Topic } from '@google-cloud/pubsub';
 import { PubSubHealthCheckService } from './pubsub-health-check.service';
 
@@ -9,9 +9,13 @@ export type PubSubHealthCheckSettings = {
   healthCheckKey?: string;
 };
 
-export type PubSubHealthCheckModuleOptions = Provider<PubSubHealthCheckSettings> & {
-  imports?: Array<Type | DynamicModule | Promise<DynamicModule> | ForwardReference>;
-};
+export interface PubSubHealthCheckAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
+  useExisting?: Type<PubSubHealthCheckSettings>;
+  useClass?: Type<PubSubHealthCheckSettings>;
+  useValue?: PubSubHealthCheckSettings;
+  useFactory?: (...args: any[]) => Promise<PubSubHealthCheckSettings> | PubSubHealthCheckSettings;
+  inject?: any[];
+}
 
 @Module({})
 export class PubSubHealthCheckModule {
@@ -34,7 +38,7 @@ export class PubSubHealthCheckModule {
   static forRoot(options: PubSubHealthCheckSettings): DynamicModule {
     return PubSubHealthCheckModule.forRootAsync({
       useValue: options,
-    } as PubSubHealthCheckModuleOptions);
+    });
   }
 
   /**
@@ -57,17 +61,20 @@ export class PubSubHealthCheckModule {
    * ```
    */
 
-  static forRootAsync(options: Omit<PubSubHealthCheckModuleOptions, 'provide'>): DynamicModule {
-    const { imports = [], ...restOptions } = options;
+  static forRootAsync(options: PubSubHealthCheckAsyncOptions): DynamicModule {
+    const { imports = [], useClass, useFactory, useExisting, inject } = options;
     return {
       module: PubSubHealthCheckModule,
       global: true,
       imports,
       providers: [
         {
-          ...restOptions,
+          inject,
+          useClass,
+          useFactory,
+          useExisting,
           provide: PubSubHealthCheckSettings,
-        } as PubSubHealthCheckModuleOptions,
+        },
         {
           provide: PubSubHealthCheckService,
           inject: [PubSubHealthCheckSettings],
