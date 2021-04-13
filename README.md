@@ -17,7 +17,7 @@ to access topic info.
 Installation:
 
 ```sh
-npm i nestjs-pubsub-health-check
+npm i @tricky-max/nestjs-pubsub-health-check
 ```
 
 ```js
