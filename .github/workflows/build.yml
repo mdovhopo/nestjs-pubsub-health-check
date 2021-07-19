@@ -44,7 +44,6 @@ jobs:
         run: |
           npm ci
           npm run build
-          npm run build:docs
 
       - name: Publish docs
         uses: peaceiris/actions-gh-pages@v3
