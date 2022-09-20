@@ -6,7 +6,6 @@ import {
 
 jest.mock('./pubsub-health-check.service');
 import { PubSubHealthCheckService } from './pubsub-health-check.service';
-import 'jest-extended';
 
 describe('PubSubHealthCheckModule', () => {
   afterEach(() => jest.restoreAllMocks());
