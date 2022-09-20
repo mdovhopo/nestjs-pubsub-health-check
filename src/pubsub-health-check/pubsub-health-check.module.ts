@@ -63,18 +63,25 @@ export class PubSubHealthCheckModule {
 
   static forRootAsync(options: PubSubHealthCheckAsyncOptions): DynamicModule {
     const { imports = [], useClass, useFactory, useExisting, inject } = options;
+
+    const providers: any = { inject, provide: PubSubHealthCheckSettings };
+
+    if (useFactory) {
+      providers.useFactory = useFactory;
+    }
+    if (useClass) {
+      providers.useClass = useClass;
+    }
+    if (useExisting) {
+      providers.useExisting = useExisting;
+    }
+
     return {
       module: PubSubHealthCheckModule,
       global: true,
       imports,
       providers: [
-        {
-          inject,
-          useClass,
-          useFactory,
-          useExisting,
-          provide: PubSubHealthCheckSettings,
-        },
+        providers,
         {
           provide: PubSubHealthCheckService,
           inject: [PubSubHealthCheckSettings],

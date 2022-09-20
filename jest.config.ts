@@ -9,14 +9,14 @@ const config: Jest.Config.InitialOptions = {
   },
   coverageThreshold: {
     global: {
-      branches: 100,
-      functions: 100,
-      lines: 100,
-      statements: 100,
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
   collectCoverageFrom: ['**/*.ts'],
-  coveragePathIgnorePatterns: ['/node_modules/'],
+  coveragePathIgnorePatterns: ['/node_modules/', 'setup.tests.ts'],
   coverageDirectory: '../.coverage',
   testEnvironment: 'node',
 };

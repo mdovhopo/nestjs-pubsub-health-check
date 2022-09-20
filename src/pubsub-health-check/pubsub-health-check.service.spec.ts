@@ -4,80 +4,77 @@ import { PubSubHealthCheckService } from './pubsub-health-check.service';
 
 describe('PubSubHealthCheckService', () => {
   const requestTimeout = 50;
-  const hydraIntegrationTopicMock = {
+  const topic1Mock = {
     exists: jest.fn(),
-    name: 'hydra-topic',
+    name: 'topic-1',
   };
-  const dasSyncWorkerTopicMock = {
+  const topic2Mock = {
     exists: jest.fn(),
-    name: 'das-worker',
+    name: 'topic-2',
   };
 
   const pubSubHealthCheckService = new PubSubHealthCheckService({
-    topics: [
-      (hydraIntegrationTopicMock as unknown) as Topic,
-      (dasSyncWorkerTopicMock as unknown) as Topic,
-    ],
+    topics: [topic1Mock as unknown as Topic, topic2Mock as unknown as Topic],
     timeout: requestTimeout,
   });
 
   afterEach(() => jest.clearAllMocks());
 
   it('returns ok if all topics exist', async () => {
-    hydraIntegrationTopicMock.exists.mockResolvedValue([true]);
-    dasSyncWorkerTopicMock.exists.mockResolvedValue([true]);
+    topic1Mock.exists.mockResolvedValue([true]);
+    topic2Mock.exists.mockResolvedValue([true]);
 
     const res = await pubSubHealthCheckService.pingCheck();
 
     expect(res).toEqual({ pubsub: { status: 'up' } });
   });
 
-  it('fails if it cannot connect to hydra topic', async () => {
+  it('fails if it cannot connect to topic1 topic', async () => {
     const timeoutSpy = jest.spyOn(global, 'setTimeout');
-    hydraIntegrationTopicMock.exists.mockReturnValue(new Promise(() => 0));
-    dasSyncWorkerTopicMock.exists.mockResolvedValue([true]);
+    topic1Mock.exists.mockReturnValue(new Promise(() => 0));
+    topic2Mock.exists.mockResolvedValue([true]);
 
     await expect(pubSubHealthCheckService.pingCheck()).rejects.toThrow(
-      new HealthCheckError(`${hydraIntegrationTopicMock.name}: request timeout`, {
-        reason: `${hydraIntegrationTopicMock.name}: request timeout`,
+      new HealthCheckError(`${topic1Mock.name}: request timeout`, {
+        reason: `${topic1Mock.name}: request timeout`,
       })
     );
 
     expect(timeoutSpy).toBeCalledWith(expect.any(Function), requestTimeout);
   });
 
-  it('fails if hydra topic does not exist', async () => {
-    hydraIntegrationTopicMock.exists.mockResolvedValue([false]);
-    dasSyncWorkerTopicMock.exists.mockResolvedValue([true]);
+  it('fails if topic1 topic does not exist', async () => {
+    topic1Mock.exists.mockResolvedValue([false]);
+    topic2Mock.exists.mockResolvedValue([true]);
 
     await expect(pubSubHealthCheckService.pingCheck()).rejects.toThrow(
-      new HealthCheckError(`${hydraIntegrationTopicMock.name}: topic does not exist`, {
-        reason: `${hydraIntegrationTopicMock.name}: topic does not exist`,
+      new HealthCheckError(`${topic1Mock.name}: topic does not exist`, {
+        reason: `${topic1Mock.name}: topic does not exist`,
       })
     );
   });
 
-  it('fails if it cannot connect to das topic', async () => {
+  it('fails if it cannot connect to topic2', async () => {
     const timeoutSpy = jest.spyOn(global, 'setTimeout');
-    hydraIntegrationTopicMock.exists.mockResolvedValue([true]);
-    dasSyncWorkerTopicMock.exists.mockReturnValue(new Promise(() => 0));
+    topic1Mock.exists.mockResolvedValue([true]);
+    topic2Mock.exists.mockReturnValue(new Promise(() => 0));
 
     await expect(pubSubHealthCheckService.pingCheck()).rejects.toThrow(
-      new HealthCheckError(`${dasSyncWorkerTopicMock.name}: request timeout`, {
-        reason: `${dasSyncWorkerTopicMock.name}: request timeout`,
+      new HealthCheckError(`${topic2Mock.name}: request timeout`, {
+        reason: `${topic2Mock.name}: request timeout`,
       })
     );
 
     expect(timeoutSpy).toBeCalledWith(expect.any(Function), requestTimeout);
   });
 
-  it('fails if das topic does not exist', async () => {
-    hydraIntegrationTopicMock.exists.mockResolvedValue([true]);
-    dasSyncWorkerTopicMock.exists.mockResolvedValue([false]);
+  it('fails if topic 2 does not exist', async () => {
+    topic1Mock.exists.mockResolvedValue([true]);
+    topic2Mock.exists.mockResolvedValue([false]);
 
     await expect(pubSubHealthCheckService.pingCheck()).rejects.toThrow(
-      new HealthCheckError(`${dasSyncWorkerTopicMock.name}: topic does not exist`, {
-        reason: `${dasSyncWorkerTopicMock.name}: topic does not exist`,
+      new HealthCheckError(`${topic2Mock.name}: topic does not exist`, {
+        reason: `${topic2Mock.name}: topic does not exist`,
       })
     );
   });

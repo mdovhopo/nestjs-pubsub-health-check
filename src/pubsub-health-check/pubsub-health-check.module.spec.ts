@@ -49,14 +49,7 @@ describe('PubSubHealthCheckModule', () => {
             inject: [PubSubHealthCheckSettings],
             useClass: undefined,
             useExisting: undefined,
-            useFactory: expect.toSatisfy((fun) => {
-              const pubSubHealthCheckService = fun(settings);
-
-              expect(pubSubHealthCheckService).toBeInstanceOf(PubSubHealthCheckService);
-              expect(PubSubHealthCheckService).toBeCalledWith(settings);
-
-              return true;
-            }),
+            useFactory: createPubSubHealthCheck,
           },
         ],
         exports: [PubSubHealthCheckService],
